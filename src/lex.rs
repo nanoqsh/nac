@@ -39,7 +39,7 @@ impl<'a> Lex<'a> {
 
         match ch {
             '#' => {
-                for ch in &mut chars {
+                for ch in chars {
                     if ch == '\n' {
                         break;
                     }
@@ -65,7 +65,7 @@ impl<'a> Lex<'a> {
                 }
 
                 let mut dot = false;
-                for ch in &mut chars {
+                for ch in chars {
                     if ch == '.' && !dot {
                         dot = true;
                     } else if !is_alpha(ch) && !is_digit(ch) {
