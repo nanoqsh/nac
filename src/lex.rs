@@ -49,24 +49,22 @@ impl<'a> Lex<'a> {
                 let st = self.take(ptr);
                 Some((Class::Comment(&st[1..]), st))
             }
-            ch if is_digit(ch) => {
+            _ if is_digit(ch) => {
                 let mut radix = 10;
-                let mut dot = false;
-
                 if ch == '0' {
-                    'skip: {
-                        let ch;
-                        (ch, radix) = match chars.peek() {
-                            Some(&ch @ 'x') => (ch, 16),
-                            Some(&ch @ 'b') => (ch, 2),
-                            _ => break 'skip,
+                    'radix: {
+                        radix = match chars.peek() {
+                            Some('x') => 16,
+                            Some('b') => 2,
+                            _ => break 'radix,
                         };
 
                         chars.next();
-                        ptr += ch.len_utf8();
+                        ptr += 1;
                     }
                 }
 
+                let mut dot = false;
                 for ch in &mut chars {
                     if ch == '.' && !dot {
                         dot = true;
@@ -87,7 +85,7 @@ impl<'a> Lex<'a> {
 
                 Some((cl.unwrap_or(Class::Undefined), st))
             }
-            ch if is_alpha(ch) => {
+            _ if is_alpha(ch) => {
                 for ch in chars {
                     if !is_alpha(ch) && !is_digit(ch) {
                         break;
