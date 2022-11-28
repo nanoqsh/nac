@@ -1,0 +1,7 @@
+
+# hi
+fun name
+    put 0 # lol
+    put 1
+    add
+end
