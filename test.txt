@@ -1,7 +1,5 @@
 
-# hi
-fun name
-    put 0 # lol
+fun 0
+    put 0
     put 1
     add
-end
