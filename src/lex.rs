@@ -50,6 +50,27 @@ impl<'a> Lex<'a> {
                 Some((Class::Comment(&st[1..]), st))
             }
             '-' => Some((Class::Minus, self.take(ptr))),
+            '\'' => {
+                let mut escape = false;
+
+                // Escape all chars, more detailed string parsing at the level above
+                for ch in chars {
+                    match ch {
+                        '\\' => escape = true,
+                        '\'' if !escape => {
+                            ptr += ch.len_utf8();
+                            break;
+                        }
+                        _ if escape => escape = false,
+                        _ => {}
+                    }
+
+                    ptr += ch.len_utf8();
+                }
+
+                let st = self.take(ptr);
+                Some((Class::Str(&st[1..st.len() - 1]), st))
+            }
             _ if is_digit(ch) => {
                 let mut radix = 10;
                 if ch == '0' {
@@ -91,6 +112,7 @@ impl<'a> Lex<'a> {
                     if !is_alpha(ch) && !is_digit(ch) {
                         break;
                     }
+
                     ptr += ch.len_utf8();
                 }
 
@@ -121,8 +143,9 @@ pub enum Class<'a> {
     Num(u32),
     Flt(f32),
     Name(&'a str),
-    Comment(&'a str),
+    Str(&'a str),
     Minus,
+    Comment(&'a str),
     Undefined,
 }
 
@@ -133,6 +156,7 @@ mod tests {
     #[test]
     fn parse() {
         let src = r#"
+            'hi' '\'' ''
             foo 12 0x1F
             0b101 1.1 &
             -5 #hi
@@ -143,6 +167,18 @@ mod tests {
         assert_eq!(
             lx,
             [
+                Tok {
+                    class: Class::Str("hi"),
+                    span: "'hi'"
+                },
+                Tok {
+                    class: Class::Str("\\'"),
+                    span: "'\\''"
+                },
+                Tok {
+                    class: Class::Str(""),
+                    span: "''"
+                },
                 Tok {
                     class: Class::Name("foo"),
                     span: "foo"

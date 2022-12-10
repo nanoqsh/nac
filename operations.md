@@ -1,6 +1,5 @@
 ```
  n    op            name                          description                       semantics
-────────────────────────────────────────────────────────────────────────────────────────────────────
   0   nop   no operation            Do nothing
   1   nul   put nul                 Put zero value on the stack               <- 0
   2   put   put                     Put a value on the stack                  <- a
@@ -28,8 +27,8 @@
  24   dlc   deallocate              Deallocate a memory                       -> z; dealloc z
  25   flc   allocate frame          Allocate new memory in the current        -> z; falloc z
                                     stackframe
- 26   mov   move                    Move a memory from a pointer to other     -> z; -> y; -> x;
-                                    by length                                 move z y x
+ 26   mcp   memory copy             Copy a memory from a pointer to other     -> z; -> y; -> x;
+                                    by length                                 copy z y x
  27   inc   increment               Increment value in the stack              -> z; <- z + 1
  28   dec   decrement               Decrement value in the stack              -> z; <- z - 1
  29   neg   negation                Negate value in the stack                 -> z; <- -z
