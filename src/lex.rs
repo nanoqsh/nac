@@ -29,7 +29,7 @@ impl<'a> Lex<'a> {
         }
 
         fn is_alpha(ch: char) -> bool {
-            matches!(ch, 'a'..='z' | 'A'..='Z')
+            matches!(ch, 'a'..='z' | 'A'..='Z' | '_')
         }
 
         self.skip_whitespace();
@@ -49,6 +49,7 @@ impl<'a> Lex<'a> {
                 let st = self.take(ptr);
                 Some((Class::Comment(&st[1..]), st))
             }
+            '-' => Some((Class::Minus, self.take(ptr))),
             _ if is_digit(ch) => {
                 let mut radix = 10;
                 if ch == '0' {
@@ -121,6 +122,7 @@ pub enum Class<'a> {
     Flt(f32),
     Name(&'a str),
     Comment(&'a str),
+    Minus,
     Undefined,
 }
 
@@ -133,7 +135,7 @@ mod tests {
         let src = r#"
             foo 12 0x1F
             0b101 1.1 &
-            5 #hi
+            -5 #hi
             #lol
         "#;
 
@@ -164,6 +166,10 @@ mod tests {
                 Tok {
                     class: Class::Undefined,
                     span: "&"
+                },
+                Tok {
+                    class: Class::Minus,
+                    span: "-"
                 },
                 Tok {
                     class: Class::Num(5),

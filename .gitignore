@@ -1,2 +1,5 @@
 /target
+/_*
+/lolies
 Cargo.lock
+*.nu
