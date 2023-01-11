@@ -15,6 +15,8 @@ fn main() {
         .expect("read src");
 
     for tok in Lex::new(&src) {
-        println!("{tok:?}");
+        let offset = tok.offset_in(&src);
+        let len = tok.len();
+        println!("{tok:?} (offset: {offset}, len: {len})");
     }
 }

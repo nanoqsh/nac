@@ -138,6 +138,20 @@ pub struct Tok<'a> {
     pub span: &'a str,
 }
 
+impl<'a> Tok<'a> {
+    /// Returns token's byte length.
+    pub fn len(&self) -> usize {
+        self.span.len()
+    }
+
+    /// Returns token's offset in src.
+    pub fn offset_in(&self, src: &'a str) -> usize {
+        let src_start = src.as_ptr() as usize;
+        let begin = self.span.as_ptr() as usize;
+        begin - src_start
+    }
+}
+
 #[derive(Debug, PartialEq)]
 pub enum Class<'a> {
     Num(u32),
@@ -157,6 +171,7 @@ mod tests {
     fn parse() {
         let src = r#"
             'hi' '\'' ''
+            '#str'
             foo 12 0x1F
             0b101 1.1 &
             -5 #hi
@@ -178,6 +193,10 @@ mod tests {
                 Tok {
                     class: Class::Str(""),
                     span: "''"
+                },
+                Tok {
+                    class: Class::Str("#str"),
+                    span: "\'#str\'",
                 },
                 Tok {
                     class: Class::Name("foo"),
