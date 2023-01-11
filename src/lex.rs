@@ -196,7 +196,7 @@ mod tests {
                 },
                 Tok {
                     class: Class::Str("#str"),
-                    span: "\'#str\'",
+                    span: "'#str'",
                 },
                 Tok {
                     class: Class::Name("foo"),
